@@ -1,50 +1,31 @@
-name: CD
+name: CI
 
 on:
   push:
     branches:
-      - master
+      - feature
 
 permissions:
-  id-token: write
   contents: read
-
-env:
-  AWS_REGION: ap-south-1
-  ECR_REPOSITORY: demo-app
-  EKS_CLUSTER_NAME: Demo-EKS
+  id-token: write
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout master
+      - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Debug OIDC claims
+        uses: github/actions-oidc-debugger@main
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ap-south-1
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Configure kubectl
+      - name: Verify AWS identity
         run: |
-          aws eks update-kubeconfig \
-            --name $EKS_CLUSTER_NAME \
-            --region $AWS_REGION
-
-      - name: Deploy to EKS
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: |
-          kubectl -n demo set image deployment/demo-app \
-            demo-app=$ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-      - name: Verify deployment
-        run: |
-          kubectl -n demo rollout status deployment/demo-app
+          aws sts get-caller-identity
