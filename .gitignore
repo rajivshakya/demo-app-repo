@@ -1,0 +1,40 @@
+# Environment / secrets
+.env
+.env.*
+*.pem
+*.key
+
+# SSH
+.ssh/
+
+# Kubernetes local/generated files
+*.kubeconfig
+kubeconfig
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Node.js (if applicable)
+node_modules/
+npm-debug.log*
+
+# Python (if applicable)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
