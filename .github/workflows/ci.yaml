@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
   build:
@@ -22,31 +21,11 @@ jobs:
           echo "Running tests..."
           # Add actual application tests here
 
-      - name: Run scan
+      - name: Run source code scan
         run: |
           echo "Running source code scan..."
           # Add SonarQube, Gitleaks, etc. here
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::402909940688:role/GitHubActionsDemoAppRole
-          aws-region: ap-south-1
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
       - name: Build Docker image
         run: |
           docker build -t demo-app:${{ github.sha }} .
-
-      - name: Tag Docker image
-        run: |
-          docker tag demo-app:${{ github.sha }} \
-            402909940688.dkr.ecr.ap-south-1.amazonaws.com/demo-app:${{ github.sha }}
-
-      - name: Push Docker image
-        run: |
-          docker push \
-            402909940688.dkr.ecr.ap-south-1.amazonaws.com/demo-app:${{ github.sha }}
