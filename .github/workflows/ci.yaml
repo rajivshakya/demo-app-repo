@@ -19,7 +19,12 @@ jobs:
       - name: Run tests
         run: |
           echo "Running tests..."
-          # yahan application ke actual tests add karna
+          # Add actual application tests here
+
+      - name: Run source code scan
+        run: |
+          echo "Running source code scan..."
+          # Add SonarQube, Gitleaks, etc. here
 
       - name: Build Docker image
         run: |
